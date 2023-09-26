@@ -1,114 +1,112 @@
-CREATE DATABASE System_Bancario;
-USE System_Bancario;
+CREATE DATABASE sistema_bancario;
+USE sistema_bancario;
 
-create table banco (
-codigo int NOT NULL,
-nome varchar(50) DEFAULT NULL,
-PRIMARY KEY (codigo)
+CREATE TABLE BANCO (
+    codigo INT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(50) DEFAULT NULL,
+    PRIMARY KEY (codigo)
 );
 
-create table agencia(
-cod_banco int DEFAULT NULL,
-numero_agencia int NOT NULL,
-endereco varchar(50) DEFAULT NULL,
-PRIMARY KEY (numero_agencia),
-foreign key (cod_banco) REFERENCES banco (codigo)
+CREATE TABLE AGENCIA (
+    cod_banco INT NOT NULL AUTO_INCREMENT,
+    numero_agencia varchar(4) NOT NULL,
+    endereco VARCHAR(50) DEFAULT NULL,
+    PRIMARY KEY (numero_agencia),
+    FOREIGN KEY (cod_banco) REFERENCES banco (codigo)
 );
 
-create table cliente (
-cpf char(11) NOT NULL,
-nome varchar(50) NOT NULL,
-sexo char(1) NOT NULL,
-endereco varchar(50) DEFAULT NULL,
-primary key (cpf),
-check (sexo in ('M', 'F'))
+CREATE TABLE CLIENTE (
+    cpf CHAR(14) NOT NULL UNIQUE,
+    nome VARCHAR(50) NOT NULL,
+    sexo CHAR(1) NOT NULL,
+    endereco VARCHAR(50) DEFAULT NULL,
+    PRIMARY KEY (cpf),
+    CHECK (sexo IN ('M', 'F'))
 );
 
-create table conta (
-numero_conta char(7) NOT NULL,
-saldo varchar(100) NOT NULL,
-tipo_conta varchar(15) DEFAULT NULL,
-num_agencia char(4) NOT NULL,
-PRIMARY KEY (numero_conta),
-foreign key (num_agencia) REFERENCES agencia (numero_agencia)
+CREATE TABLE CONTA (
+    numero_conta CHAR(7) NOT NULL,
+    saldo DECIMAL(10, 2) NOT NULL,
+    tipo_conta CHAR(1) DEFAULT NULL,
+    num_agencia varchar(4) NOT NULL,
+    CHECK (tipo_conta IN ('1', '2', '3')),
+    PRIMARY KEY (numero_conta),
+    FOREIGN KEY (num_agencia) REFERENCES agencia (numero_agencia)
 );
 
-create table historico(
-cpf_cliente char(14) NOT NULL,
-num_conta char(9) NOT NULL,
-data_inicio date DEFAULT NULL,
-PRIMARY KEY (cpf_cliente,num_conta),
-foreign key (cpf_cliente) REFERENCES cliente (cpf),
-foreign key (num_conta) REFERENCES conta (numero_conta)
+CREATE TABLE HISTORICO (
+    cpf_cliente CHAR(14) NOT NULL UNIQUE,
+    num_conta CHAR(7) NOT NULL,
+    data_inicio DATE DEFAULT NULL,
+    PRIMARY KEY (cpf_cliente, num_conta),
+    FOREIGN KEY (cpf_cliente) REFERENCES cliente (cpf),
+    FOREIGN KEY (num_conta) REFERENCES conta (numero_conta)
 );
 
-create table telefone_cliente(
-cpf_cli char(14) NOT NULL,
-telefone char(14) NOT NULL,
-PRIMARY KEY (cpf_cli, telefone),
-foreign key (cpf_cli) REFERENCES cliente (cpf)
+CREATE TABLE TELEFONE_CLIENTE (
+    cpf_cli CHAR(14) NOT NULL,
+    telefone CHAR(15) NOT NULL,
+    PRIMARY KEY (cpf_cli, telefone),
+    FOREIGN KEY (cpf_cli) REFERENCES cliente (cpf)
 );
 
-insert into banco(codigo, nome) values ('1', 'banco do brasil');
-insert into banco(codigo, nome) values ('4', 'CEF');
+INSERT INTO BANCO (codigo, nome) value ('1','Banco do Brasil');
+INSERT INTO BANCO (codigo, nome) value ('4','CEF');
 
-insert into agencia(numero_agencia, endereco, cod_banco) values ('322', 'Av. Walfredo Macedo Brandao, 1139', '4');
-insert into agencia(numero_agencia, endereco, cod_banco) values ('1253', 'R. Bancario Sergio Guerra, 17', '1');
+INSERT INTO AGENCIA (cod_banco, numero_agencia, endereco) values
+('4', '322', 'Av. Walfredo Macedo Brandao, 1139'),
+('1', '1253', 'R. Bancário Sérgio Guerra, 17');
 
-insert into cliente(cpf, nome, sexo, endereco) values ('111.222.333-44', 'Matheus Farias', 'M', 'Rua Jose Firmino Ferreira, 1050');
-insert into cliente(cpf, nome, sexo, endereco) values ('666.777.888-99', 'Alvaro George', 'M', 'Av. Epitacio Pessoa, 1008');
-insert into cliente(cpf, nome, sexo, endereco) values ('555.444.777.33', 'Bruna Andrade', 'F', 'Rua Bancario Sergio Guerra, 640');
+INSERT INTO CLIENTE (cpf, nome, sexo, endereco) values 
+('111.222.333-44', 'Bruna Andrade', 'F', 'Rua José Firmino Ferreira, 1050 '),
+('666.777.888-99', 'Radegondes Silva', 'M', 'Av. Epitácio Pessoa, 1008 '),
+('555.444.777-33', 'Ryan Nascimento', 'M', 'Rua Bancário Sérgio Guerra, 640');
 
-insert into conta(numero_conta, saldo, tipo_conta, num_agencia) values ('11765-2', '22.745.05', '2', '322');
-insert into conta(numero_conta, saldo, tipo_conta, num_agencia) values ('21010-7', '3.100.96', '1', '1253');
+INSERT INTO CONTA (numero_conta, saldo, tipo_conta, num_agencia) values 
+('11765-2', '22745.05', '2', '322'),
+('21010-7', '3100.96', '1', '1253');
 
-insert into historico(cpf_cliente, num_conta, data_inicio) values ('111.222.333-44', '11765-2', '22.12.2015');
-insert into historico(cpf_cliente, num_conta, data_inicio) values ('666.777.888-99', '11765-2', '05.10.2016');
-insert into historico(cpf_cliente, num_conta, data_inicio) values ('555.444.777-3', '21010-7', '29.08.2012');
+INSERT INTO HISTORICO (cpf_cliente, num_conta, data_inicio) values 
+('111.222.333-44', '11765-2', '2015-12-22'),
+('666.777.888-99', '11765-2', '2016-10-05'),
+('555.444.777-33', '21010-7', '2012-08-29');
 
-insert into telefone_cliente(cpf_cli, telefone) values ('111.222.333-44', '(83) 3222-1234');
-insert into telefone_cliente(cpf_cli, telefone) values ('666.777.888-99', '(83) 9944-999');
-insert into telefone_cliente(cpf_cli, telefone) values ('666.777.888-99', '(83) 3233-2267');
+INSERT INTO TELEFONE_CLIENTE (cpf_cli, telefone) values 
+('111.222.333-44', '(83) 3222-1234'),
+('666.777.888-99', '(83) 99443-9999'),
+('555.444.777-33', '(83) 3233-2267');
 
-alter table cliente add column pais char(3) default('BRA');
-alter table cliente add column email varchar(50);
+ALTER TABLE CLIENTE ADD COLUMN país char(3) DEFAULT 'BRA';
 
-delete from conta where numero_conta='11765-2';
+ALTER TABLE CLIENTE ADD COLUMN email varchar(30) not null;
 
-select * from agencia;
+ALTER TABLE HISTORICO DROP FOREIGN KEY historico_ibfk_2;
+DELETE FROM CONTA WHERE numero_conta = '11765-2';
 
-update agencia set numero_agencia='6342' where cod_banco='4';
+UPDATE AGENCIA SET numero_agencia = '6342' WHERE numero_agencia = '322';
 
-select * from agencia;
+ALTER TABLE CONTA MODIFY numero_conta char(7);
 
-alter table conta modify numero_conta char(7);
+UPDATE CLIENTE SET email = 'radegondes.silva@gmail.com' WHERE cpf = '666.777.888-99';
 
-update cliente set email='matheus.farias@gmail.com' where cpf='111.222.333-44';
+UPDATE CONTA SET saldo = saldo * 1.10 WHERE numero_conta = '21010-7';
 
-select * from cliente;
+UPDATE CLIENTE SET nome = 'Bruna Fernandes' WHERE cpf = '111.222.333-44';
 
-alter table conta add column desconto decimal;
+UPDATE CONTA SET tipo_conta = '3' WHERE saldo > 10000.00;
 
-update conta set desconto = '10%' WHERE numero_conta='210107';
+ SELECT nome, sexo FROM CLIENTE ORDER BY nome DESC;
 
-select * from conta;
+SELECT A.numero_agencia, SUM(CO.saldo) AS saldo_total_da_agencia FROM AGENCIA A LEFT JOIN CONTA CO ON A.numero_agencia = CO.num_agencia GROUP BY A.numero_agencia;
 
-update cliente set nome = 'Bruna Fernandez' where cpf = '555.444.777-33';
+SELECT A.numero_agencia, COUNT(DISTINCT C.cpf) AS quantidade_de_clientes FROM AGENCIA A LEFT JOIN CONTA CO ON A.numero_agencia = CO.num_agencia LEFT JOIN HISTORICO H ON CO.numero_conta = H.num_conta LEFT JOIN CLIENTE C ON H.cpf_cliente = C.cpf GROUP BY A.numero_agencia;
 
-update conta set tipo_conta = 3 where saldo >= 10.000;
+SELECT CLIENTE.nome, CLIENTE.endereco, HISTORICO.num_conta FROM CLIENTE JOIN HISTORICO ON CLIENTE.cpf = HISTORICO.cpf_cliente;
 
-select nome, sexo from cliente order by nome desc;
+SELECT sexo, COUNT(*) as quantidade FROM CLIENTE GROUP BY sexo;
 
-SELECT A.numero_agencia, SUM(C.saldo) AS saldo_total_agencia FROM agencia A LEFT JOIN conta C ON A.numero_agencia = C.num_agencia GROUP BY A.numero_agencia;
+SELECT CLIENTE.nome, CONTA.saldo FROM CLIENTE JOIN HISTORICO ON CLIENTE.cpf = HISTORICO.cpf_cliente JOIN CONTA ON HISTORICO.num_conta = CONTA.numero_conta WHERE CONTA.saldo = (SELECT MAX(saldo) FROM CONTA);
 
-SELECT A.numero_agencia, COUNT(C.cpf) AS quantidade_clientes FROM agencia A LEFT JOIN cliente C ON A.numero_agencia = C.num_agencia GROUP BY A.numero_agencia;
+SELECT CLIENTE.nome, CONTA.saldo AS saldo_atual, CONTA.saldo * 1.035 AS saldo_com_aumento FROM CLIENTE JOIN HISTORICO ON CLIENTE.cpf = HISTORICO.cpf_cliente JOIN CONTA ON HISTORICO.num_conta = CONTA.numero_conta;
 
-SELECT C.nome AS NomeCliente, C.endereco AS EnderecoCliente, CO.numero_conta AS NumeroConta FROM cliente C INNER JOIN historico H ON C.cpf = H.cpf_cliente INNER JOIN conta CO ON H.num_conta = CO.numero_conta;
-
-SELECT sexo, COUNT(*) AS quantidade_pessoas FROM cliente GROUP BY sexo;
-
-SELECT C.nome AS NomeCliente FROM cliente C INNER JOIN historico H ON C.cpf = H.cpf_cliente INNER JOIN conta CO ON H.num_conta = CO.numero_conta ORDER BY CO.saldo DESC LIMIT 1;
-
-SELECT C.nome AS NomeCliente, CO.saldo AS SaldoOriginal, ROUND(CO.saldo * 1.035, 2) AS NovoSaldoComAumento FROM cliente C INNER JOIN historico H ON C.cpf = H.cpf_cliente INNER JOIN conta CO ON H.num_conta = CO.numero_conta;
-
-SELECT nome FROM cliente WHERE endereco  LIKE 'Av%';
+SELECT nome FROM CLIENTE WHERE endereco LIKE 'Av.%';
